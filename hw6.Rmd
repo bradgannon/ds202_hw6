@@ -1,0 +1,43 @@
+---
+title: "HW6"
+author: "Brad Gannon"
+date: "April 21, 2019"
+output: html_document
+---
+
+```{r}
+# I used Excel to organize useful data into its own sheet, which helped with confusion among column headers
+
+data <- readxl::read_xlsx('KIB.xlsx', sheet='DataToUse')
+head(data, 3)
+
+# It would be inaccurate to replace NA values with a mean, so I will let ggplot remove rows containing missing values
+
+knitr::opts_chunk$set(fig.width = 20, fig.height=15) # change figure size in Rmd/HTML
+```
+
+```{r}
+library(tidyverse)
+library(ggrepel)
+
+p <- ggplot(data, aes(x=Score, y=Popularity, color=Category, shape=Size, size=Intelligence)) + geom_point() + scale_y_reverse() + geom_vline(xintercept = 2.375) + geom_hline(yintercept = 87.5)
+
+p <- p + ggtitle("Best in Show: The Ultimate Data Dog") + geom_text_repel(label=data$Breed, size=5)
+
+p <- p + theme(plot.title = element_text(size = 40, face="bold")) + xlab("Popularity")
+
+p <- p + theme(axis.title=element_text(size=25, face="bold"), axis.text = element_blank())
+
+p <- p + theme(legend.title=element_text(size=30), legend.text=element_text(size=22))
+
+p <- p + theme(legend.key.size = unit(2, "cm")) + guides(color = guide_legend(override.aes=list(size=10)))
+
+p <- p + guides(shape = guide_legend(override.aes=list(size=10))) + ylab("Data Score\n(Intelligence, Costs, Longevity, Grooming, Ailments, Appetite)")
+
+p <- p + annotate("text", x=1.15, y=175, label="The Rightly Ignored", size=8)
+p <- p + annotate("text", x=1.17, y=-2, label="Inexpicably Overrated", size=8)
+p <- p + annotate("text", x=3.6, y=-2, label="Hot Dogs!", size=8)
+p <- p + annotate("text", x=3.43, y=175, label="Overlooked Treasures", size=8)
+
+p
+```
